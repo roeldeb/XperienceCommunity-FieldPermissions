@@ -1,0 +1,12 @@
+{
+  "servers": {
+    "kentico.docs.mcp": {
+      "type": "http",
+      "url": "https://docs.kentico.com/mcp"
+    },
+    "gitnexus": {
+      "command": "npx",
+      "args": ["-y", "gitnexus-mcp@latest"]
+    }
+  }
+}

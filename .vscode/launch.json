@@ -1,0 +1,11 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "DancingGoat",
+      "type": "dotnet",
+      "request": "launch",
+      "projectPath": "${workspaceFolder}/examples/DancingGoat/DancingGoat.csproj"
+    }
+  ]
+}

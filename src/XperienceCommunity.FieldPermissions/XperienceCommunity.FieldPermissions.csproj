@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>XperienceCommunity.FieldPermissions</PackageId>
+    <Product>XperienceCommunity.FieldPermissions</Product>
+    <Description>Xperience by Kentico Field Permissions package. Role-based field-level access control for admin form editors, managed per content type through the Kentico admin interface.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <AssemblyAttribute Include="CMS.AssemblyDiscoverableAttribute">
+    </AssemblyAttribute>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Kentico.Xperience.Admin" />
+  </ItemGroup>
+
+</Project>

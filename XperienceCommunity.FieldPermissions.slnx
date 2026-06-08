@@ -1,0 +1,17 @@
+<Solution>
+  <Folder Name="/docs/">
+    <File Path="docs/Contributing-Setup.md" />
+    <File Path="docs/Usage-Guide.md" />
+  </Folder>
+  <Folder Name="/examples/">
+    <Project Path="examples/DancingGoat/DancingGoat.csproj" />
+  </Folder>
+  <Folder Name="/Solution files/">
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.build.targets" />
+    <File Path="Directory.Packages.props" />
+  </Folder>
+  <Folder Name="/src/">
+    <Project Path="src/XperienceCommunity.FieldPermissions/XperienceCommunity.FieldPermissions.csproj" />
+  </Folder>
+</Solution>

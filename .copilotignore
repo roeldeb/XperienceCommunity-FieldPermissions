@@ -1,0 +1,30 @@
+# Dependencies
+**/node_modules/
+**/packages/
+
+# Build output
+**/bin/
+**/obj/
+**/dist/
+**/out/
+
+# Package lock files
+**/package-lock.json
+**/packages.lock.json
+
+# App Data (Kentico CI/CD repository XML files)
+**/App_Data/CDRepository/
+**/App_Data/CIRepository/
+
+# Generated code
+**/*.generated.cs
+
+# Secrets and environment-specific config
+appsettings.*.local.json
+
+# IDE and tooling
+**/.vs/
+**/.idea/
+
+# GitNexus index files
+.gitnexus/
