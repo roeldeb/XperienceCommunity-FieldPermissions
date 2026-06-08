@@ -8,8 +8,6 @@
 
 Role-based field-level access control for Xperience by Kentico admin form editors. Restrict editing of individual fields per content type based on user roles.
 
-> **⚠️ Internal API Warning:** This library depends on `Kentico.Xperience.Admin.Base.Forms.Internal`. This namespace is not part of Kentico's public API surface and may change between Xperience by Kentico versions without notice. Upgrading to a newer version of Xperience by Kentico may temporarily break this library until a compatible update is released.
-
 ## Description
 
 This module provides role-based field-level permissions that can be configured per content type through the Kentico admin interface:
@@ -67,15 +65,19 @@ The package includes built-in extenders for all standard Xperience form componen
 
 ```csharp
 using XperienceCommunity.FieldPermissions.Extenders;
+using XperienceCommunity.FieldPermissions.Services;
 
 using Kentico.Xperience.Admin.Base.Forms;
 
-[assembly: FormComponentExtender(typeof(RoleAwareMyCustomComponentExtender))]
+[assembly: FormComponentExtender(typeof(RoleAwareCustomDropdownExtender))]
 
 namespace MyProject;
 
-public sealed class RoleAwareMyCustomComponentExtender(IFieldPermissionService svc)
-    : RoleAwareFormComponentExtenderBase<MyCustomFormComponent>(svc);
+// One-liner: inherit the base and pass the service through.
+// XbyK matches extenders by exact component type, so each custom
+// component needs its own extender class.
+public sealed class RoleAwareCustomDropdownExtender(IFieldPermissionService svc)
+    : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>(svc);
 ```
 
 ## Full Instructions
