@@ -49,6 +49,9 @@ public abstract class RoleAwareFormComponentExtenderBase<T>(IFieldPermissionServ
             case FieldPermissionMode.Hide:
                 FormComponent.AddVisibilityCondition(new AlwaysHiddenVisibilityCondition());
                 break;
+            default:
+                throw new InvalidOperationException(
+                    $"Unsupported {nameof(FieldPermissionMode)} value: {restriction.Mode}.");
         }
     }
 }

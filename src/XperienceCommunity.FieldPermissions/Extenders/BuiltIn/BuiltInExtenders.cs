@@ -1,6 +1,5 @@
 using Kentico.Xperience.Admin.Base.Forms;
 
-using XperienceCommunity.FieldPermissions.Extenders;
 using XperienceCommunity.FieldPermissions.Extenders.BuiltIn;
 using XperienceCommunity.FieldPermissions.Services;
 
