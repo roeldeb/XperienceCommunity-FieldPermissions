@@ -86,8 +86,24 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Name = nameof(FieldPermissionInfo.FieldPermissionRoleMode),
+            Caption = "Role mode",
+            DataType = FieldDataType.Text,
+            Size = 10,
+            Enabled = true,
+            Visible = true,
+            AllowEmpty = false,
+            DefaultValue = "allow"
+        };
+        formItem.Settings["controlname"] = "Kentico.Administration.RadioGroup";
+        formItem.Settings["Options"] = "allow;Allow\ndisallow;Disallow";
+        formItem.Settings["Inline"] = true;
+        formInfo.AddFormItem(formItem);
+
+        formItem = new FormFieldInfo
+        {
             Name = nameof(FieldPermissionInfo.FieldPermissionAllowedRoles),
-            Caption = "Allowed roles",
+            Caption = "Roles",
             DataType = FieldDataType.LongText,
             Enabled = true,
             Visible = true,
@@ -110,6 +126,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
         };
         formItem.Settings["controlname"] = "Kentico.Administration.RadioGroup";
         formItem.Settings["Options"] = "0;Disable\n1;Hide";
+        formItem.Settings["Inline"] = true;
         formInfo.AddFormItem(formItem);
 
         formItem = new FormFieldInfo

@@ -81,7 +81,18 @@ namespace XperienceCommunity.FieldPermissions.Classes
 
 
         /// <summary>
-        /// Field permission allowed roles.
+        /// Field permission role mode (allow or disallow).
+        /// </summary>
+        [DatabaseField]
+        public virtual string FieldPermissionRoleMode
+        {
+            get => ValidationHelper.GetString(GetValue(nameof(FieldPermissionRoleMode)), "allow");
+            set => SetValue(nameof(FieldPermissionRoleMode), value);
+        }
+
+
+        /// <summary>
+        /// Field permission roles.
         /// </summary>
         [DatabaseField]
         public virtual string FieldPermissionAllowedRoles

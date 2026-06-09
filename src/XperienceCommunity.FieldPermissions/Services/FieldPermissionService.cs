@@ -4,7 +4,6 @@ using System.Text.Json;
 using CMS.DataEngine;
 using CMS.Membership;
 
-using Kentico.Xperience.Admin.Base;
 using Kentico.Xperience.Admin.Base.Authentication;
 
 using XperienceCommunity.FieldPermissions.Classes;
@@ -39,9 +38,13 @@ internal class FieldPermissionService(
             return null;
         }
 
-        var allowedRoleIds = ParseRoleIds(permission.FieldPermissionAllowedRoles);
+        var roleIds = ParseRoleIds(permission.FieldPermissionAllowedRoles);
+        bool userMatchesRole = roleIds.Any(roleId => ResolveRoleName(roleId) is { } roleName && user.IsInRole(roleName));
+        bool isDisallowMode = string.Equals(permission.FieldPermissionRoleMode, "disallow", StringComparison.OrdinalIgnoreCase);
 
-        if (allowedRoleIds.Any(roleId => ResolveRoleName(roleId) is { } roleName && user.IsInRole(roleName)))
+        // Allow mode: user must be in one of the listed roles to pass.
+        // Disallow mode: user must NOT be in any of the listed roles to pass.
+        if (isDisallowMode ? !userMatchesRole : userMatchesRole)
         {
             return null;
         }
@@ -93,14 +96,12 @@ internal class FieldPermissionService(
         }
     }
 
-    private string? ResolveRoleName(int roleId)
-    {
-        return cachedRoleNames.GetOrAdd(roleId, id =>
+    private string? ResolveRoleName(int roleId) =>
+        cachedRoleNames.GetOrAdd(roleId, id =>
         {
             var role = roleInfoProvider.Get(id);
             return role?.RoleName ?? string.Empty;
         }) is { Length: > 0 } name ? name : null;
-    }
 
     /// <summary>
     /// Parses role IDs from the stored value. The ObjectIdSelectorComponent stores
