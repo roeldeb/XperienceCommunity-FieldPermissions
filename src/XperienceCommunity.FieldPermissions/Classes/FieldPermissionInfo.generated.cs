@@ -29,6 +29,10 @@ namespace XperienceCommunity.FieldPermissions.Classes
         public static readonly ObjectTypeInfo TYPEINFO = new ObjectTypeInfo(typeof(IInfoProvider<FieldPermissionInfo>), OBJECT_TYPE, "XperienceCommunity.FieldPermission", "FieldPermissionID", null, "FieldPermissionGuid", null, null, null, null, null)
         {
             TouchCacheDependencies = true,
+            ContinuousIntegrationSettings =
+            {
+                Enabled = true,
+            },
             DependsOn = new List<ObjectDependency>()
             {
                 new ObjectDependency("FieldPermissionContentTypeID", "cms.class", ObjectDependencyEnum.Required),
