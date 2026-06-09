@@ -60,7 +60,7 @@ public class FieldPermissionEdit(
     {
         fieldPermissionService.InvalidateCache();
 
-        var displayName = FieldPermissionFormHelper.ResolveFieldDisplayName(
+        string? displayName = FieldPermissionFormHelper.ResolveFieldDisplayName(
             savedInfoObject.FieldPermissionContentTypeID, savedInfoObject.FieldPermissionFieldGuid);
 
         if (string.IsNullOrEmpty(displayName))

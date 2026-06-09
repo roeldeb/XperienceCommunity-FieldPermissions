@@ -28,7 +28,7 @@ public class FieldPermissionEditSection : EditSectionPage<FieldPermissionInfo>
     {
         if (infoObject is FieldPermissionInfo permission)
         {
-            var name = FieldPermissionFormHelper.ResolveFieldDisplayName(
+            string? name = FieldPermissionFormHelper.ResolveFieldDisplayName(
                 permission.FieldPermissionContentTypeID, permission.FieldPermissionFieldGuid);
 
             if (!string.IsNullOrEmpty(name))

@@ -8,7 +8,7 @@ namespace XperienceCommunity.FieldPermissions.Module;
 
 internal interface IFieldPermissionModuleInstaller
 {
-    void Install();
+    public void Install();
 }
 
 internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resourceInfoProvider) : IFieldPermissionModuleInstaller

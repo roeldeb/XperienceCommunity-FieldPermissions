@@ -70,14 +70,11 @@ internal static class FieldPermissionFormHelper
     /// Converts the stored JSON string back into the <see cref="List{T}"/> of role IDs
     /// that the <c>ObjectIdSelector</c> component expects when binding for editing.
     /// </summary>
-    public static void DenormalizeForEditing(FieldPermissionInfo infoObject)
-    {
-        DenormalizeAllowedRoles(infoObject);
-    }
+    public static void DenormalizeForEditing(FieldPermissionInfo infoObject) => DenormalizeAllowedRoles(infoObject);
 
     private static void DenormalizeAllowedRoles(FieldPermissionInfo infoObject)
     {
-        var raw = infoObject.GetValue(nameof(FieldPermissionInfo.FieldPermissionAllowedRoles));
+        object raw = infoObject.GetValue(nameof(FieldPermissionInfo.FieldPermissionAllowedRoles));
 
         // The ObjectIdSelector expects IEnumerable<int>; convert the stored JSON string (e.g. "[1,2,3]") back.
         if (raw is string rolesJson && !string.IsNullOrEmpty(rolesJson))
@@ -98,7 +95,7 @@ internal static class FieldPermissionFormHelper
 
     private static void NormalizeAllowedRoles(FieldPermissionInfo infoObject)
     {
-        var raw = infoObject.GetValue(nameof(FieldPermissionInfo.FieldPermissionAllowedRoles));
+        object raw = infoObject.GetValue(nameof(FieldPermissionInfo.FieldPermissionAllowedRoles));
 
         // The ObjectIdSelector binds an IEnumerable<int>; persist it as the JSON the service expects (e.g. [1,2,3]).
         if (raw is IEnumerable<int> roleIds)
@@ -111,7 +108,7 @@ internal static class FieldPermissionFormHelper
 
     private static void NormalizeFieldGuid(FieldPermissionInfo infoObject)
     {
-        var raw = infoObject.GetValue(nameof(FieldPermissionInfo.FieldPermissionFieldGuid));
+        object raw = infoObject.GetValue(nameof(FieldPermissionInfo.FieldPermissionFieldGuid));
 
         // The DropDownSelector binds the selected option (the field GUID) as a string.
         if (raw is string guidString)

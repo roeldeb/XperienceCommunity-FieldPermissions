@@ -13,19 +13,19 @@ public interface IFieldPermissionService
     /// </summary>
     /// <param name="fieldGuid">The unique GUID of the field from FormFieldInfo.</param>
     /// <returns>The restriction result, or null if the field is unrestricted for the current user.</returns>
-    Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid);
+    public Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid);
 
     /// <summary>
     /// Gets all field permission configurations for a given content type.
     /// Used by the admin UI listing page.
     /// </summary>
     /// <param name="contentTypeId">The DataClassInfo.ClassID of the content type.</param>
-    IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId);
+    public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId);
 
     /// <summary>
     /// Invalidates the cached permission data. Call when permissions are changed.
     /// </summary>
-    void InvalidateCache();
+    public void InvalidateCache();
 }
 
 /// <summary>
