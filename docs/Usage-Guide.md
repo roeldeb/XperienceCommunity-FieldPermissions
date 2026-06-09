@@ -30,7 +30,10 @@ The package uses `FormComponentExtender<T>`, the official Xperience by Kentico e
 1. An admin configures a field restriction via the "Field permissions" tab on a content type
 2. The restriction is stored in the `XperienceCommunity_FieldPermission` database table
 3. When a user opens a content item for editing, each form component's extender checks the current user's roles against the stored restrictions
-4. If the user is not in any of the allowed roles, the field is either **disabled** (read-only with an optional message) or **hidden** entirely
+4. Whether the user is restricted depends on the **role mode**:
+   - **Allow** — only users in one of the selected roles may edit the field; everyone else is restricted
+   - **Disallow** — users in any of the selected roles are restricted; everyone else may edit
+5. When restricted, the field is either **disabled** (read-only with an optional message) or **hidden** entirely, based on the restriction mode
 
 **Matching by field GUID:** Each field in a content type has a unique GUID that is immutable — it never changes even if the field is renamed. The package uses this GUID to match restrictions to fields, so renaming a field in the admin UI will not break existing permissions.
 
@@ -64,12 +67,15 @@ Navigate to **Content types** → select a content type → **Field permissions*
 From there you can:
 
 1. **Add** a new field permission using the "Add" button
-2. **Select a field** from the content type's form definition
-3. **Select roles** that are allowed to edit the field (using the role selector)
-4. **Choose the mode:**
+2. **Select a field** from the content type's form definition (includes fields from reusable field schemas)
+3. **Choose the role mode:**
+   - **Allow** — only the selected roles may edit the field
+   - **Disallow** — the selected roles may **not** edit the field; everyone else may
+4. **Select roles** the rule applies to (using the role selector)
+5. **Choose the restriction mode:**
    - **Disable** — field is shown as read-only with an optional message
    - **Hide** — field is completely invisible
-5. **Set an inactive message** (optional) — shown to restricted users when mode is "Disable"
+6. **Set an inactive message** (optional) — shown to restricted users when mode is "Disable"
 
 The listing shows all configured restrictions for the content type with the resolved field name, role names, mode, and message.
 
@@ -131,6 +137,7 @@ The `XperienceCommunity_FieldPermission` table is created automatically on first
 | `FieldPermissionGuid` | uniqueidentifier | Unique identifier |
 | `FieldPermissionContentTypeID` | int | FK to `CMS_Class.ClassID` |
 | `FieldPermissionFieldGuid` | uniqueidentifier | The field's GUID from the content type form definition |
+| `FieldPermissionRoleMode` | nvarchar(10) | `allow` (only listed roles may edit) or `disallow` (listed roles may not edit) |
 | `FieldPermissionAllowedRoles` | nvarchar(max) | JSON array of role IDs, e.g. `[1,2,3]` |
 | `FieldPermissionMode` | int | 0 = Disable, 1 = Hide |
 | `FieldPermissionInactiveMessage` | nvarchar(max) | Optional message shown when field is disabled |

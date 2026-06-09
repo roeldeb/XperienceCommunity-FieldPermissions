@@ -8,6 +8,12 @@
 
 Role-based field-level access control for Xperience by Kentico admin form editors. Restrict editing of individual fields per content type based on user roles.
 
+![Field Permissions Demo](https://raw.githubusercontent.com/roeldeb/xperiencecommunity-fieldpermissions/main/images/field-permissions-demo.png)
+
+![Field Permissions Demo](https://raw.githubusercontent.com/roeldeb/xperiencecommunity-fieldpermissions/main/images/field-permissions-demo-2.png)
+
+> **⚠️ Internal API Warning:** This library depends on `ReusableFieldSchemaUtils` from the `CMS.ContentEngine.Internal` namespace (used to resolve fields contributed by reusable field schemas). This namespace is not part of Kentico's public API surface and may change between Xperience by Kentico versions without notice. Upgrading to a newer version of Xperience by Kentico may temporarily break this library until a compatible update is released.
+
 ## Description
 
 This module provides role-based field-level permissions that can be configured per content type through the Kentico admin interface:
@@ -55,7 +61,8 @@ Navigate to **Content types** → select a content type → **Field permissions*
 
 From there you can:
 - Select a field from the content type
-- Choose which roles are allowed to edit that field
+- Choose the **role mode** — *Allow* (only the selected roles can edit the field) or *Disallow* (the selected roles cannot edit the field; everyone else can)
+- Select the roles the rule applies to
 - Set the restriction mode (Disable or Hide)
 - Optionally set a message shown to restricted users
 
