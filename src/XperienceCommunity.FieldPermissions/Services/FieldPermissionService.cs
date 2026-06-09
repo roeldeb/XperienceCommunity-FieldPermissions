@@ -17,7 +17,7 @@ internal class FieldPermissionService(
     IInfoProvider<FieldPermissionInfo> fieldPermissionProvider,
     IInfoProvider<RoleInfo> roleInfoProvider) : IFieldPermissionService
 {
-    private static readonly ConcurrentDictionary<Guid, FieldPermissionInfo> cachedPermissions = new();
+    private static readonly ConcurrentDictionary<Guid, List<FieldPermissionInfo>> cachedPermissions = new();
     private static readonly ConcurrentDictionary<int, string> cachedRoleNames = new();
     private static bool cacheLoaded;
     private static readonly object cacheLock = new();
@@ -26,7 +26,7 @@ internal class FieldPermissionService(
     {
         EnsureCacheLoaded();
 
-        if (!cachedPermissions.TryGetValue(fieldGuid, out var permission))
+        if (!cachedPermissions.TryGetValue(fieldGuid, out var permissions))
         {
             return null;
         }
@@ -38,22 +38,39 @@ internal class FieldPermissionService(
             return null;
         }
 
-        var roleIds = ParseRoleIds(permission.FieldPermissionAllowedRoles);
-        bool userMatchesRole = roleIds.Any(roleId => ResolveRoleName(roleId) is { } roleName && user.IsInRole(roleName));
-        bool isDisallowMode = string.Equals(permission.FieldPermissionRoleMode, "disallow", StringComparison.OrdinalIgnoreCase);
+        FieldRestrictionResult? worstRestriction = null;
 
-        // Allow mode: user must be in one of the listed roles to pass.
-        // Disallow mode: user must NOT be in any of the listed roles to pass.
-        if (isDisallowMode ? !userMatchesRole : userMatchesRole)
+        foreach (var permission in permissions)
         {
-            return null;
+            var roleIds = ParseRoleIds(permission.FieldPermissionAllowedRoles);
+            bool userMatchesRole = roleIds.Any(roleId => ResolveRoleName(roleId) is { } roleName && user.IsInRole(roleName));
+            bool isDisallowMode = string.Equals(permission.FieldPermissionRoleMode, "disallow", StringComparison.OrdinalIgnoreCase);
+
+            // Allow mode: user must be in one of the listed roles to pass.
+            // Disallow mode: user must NOT be in any of the listed roles to pass.
+            bool userPassesCheck = isDisallowMode ? !userMatchesRole : userMatchesRole;
+
+            if (userPassesCheck)
+            {
+                // User passes at least one permission check — field is unrestricted.
+                return null;
+            }
+
+            string? message = string.IsNullOrWhiteSpace(permission.FieldPermissionInactiveMessage)
+                ? null
+                : permission.FieldPermissionInactiveMessage;
+
+            var restriction = new FieldRestrictionResult(permission.Mode, message);
+
+            // Track the most restrictive result (Hide > Disable).
+            if (worstRestriction is null || restriction.Mode > worstRestriction.Mode)
+            {
+                worstRestriction = restriction;
+            }
         }
 
-        string? message = string.IsNullOrWhiteSpace(permission.FieldPermissionInactiveMessage)
-            ? null
-            : permission.FieldPermissionInactiveMessage;
-
-        return new FieldRestrictionResult(permission.Mode, message);
+        // User failed all permission checks — apply the most restrictive mode.
+        return worstRestriction;
     }
 
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId) =>
@@ -89,7 +106,10 @@ internal class FieldPermissionService(
 
             foreach (var permission in allPermissions)
             {
-                cachedPermissions[permission.FieldPermissionFieldGuid] = permission;
+                cachedPermissions.AddOrUpdate(
+                    permission.FieldPermissionFieldGuid,
+                    _ => [permission],
+                    (_, list) => { list.Add(permission); return list; });
             }
 
             cacheLoaded = true;

@@ -66,6 +66,35 @@ From there you can:
 - Set the restriction mode (Disable or Hide)
 - Optionally set a message shown to restricted users
 
+#### Multiple Rules per Field
+
+You can create multiple permission rules for the same field. Each rule is evaluated independently using **OR** logic:
+
+- **If the user passes any rule** → the field is **unrestricted** (fully editable)
+- **If the user fails all rules** → the **most restrictive** mode is applied (Hide > Disable)
+
+Global administrators always bypass all permission checks.
+
+**How each rule is evaluated:**
+
+| Role Mode | User matches role? | Result |
+|-----------|-------------------|--------|
+| Allow     | Yes               | Passes (unrestricted) |
+| Allow     | No                | Fails (restricted) |
+| Disallow  | Yes               | Fails (restricted) |
+| Disallow  | No                | Passes (unrestricted) |
+
+**Example** — two rules on the same field:
+
+| Rule | Role Mode | Roles   | Mode    |
+|------|-----------|---------|---------|
+| A    | Allow     | Editor  | Disable |
+| B    | Allow     | Author  | Hide    |
+
+- An **Editor** passes rule A → **unrestricted**
+- An **Author** passes rule B → **unrestricted**
+- A user who is **neither** fails both → **Hidden** (most restrictive mode wins)
+
 ### 3. Extending Custom Form Components
 
 The package includes built-in extenders for all standard Xperience form components. If your project uses custom form components (e.g., from a shared library), you can add support with a one-liner:
