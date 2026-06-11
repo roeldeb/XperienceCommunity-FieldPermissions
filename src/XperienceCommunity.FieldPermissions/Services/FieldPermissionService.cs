@@ -22,11 +22,11 @@ internal class FieldPermissionService(
     private static bool cacheLoaded;
     private static readonly object cacheLock = new();
 
-    public async Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid)
+    public async Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid, int? contentTypeId = null)
     {
-        EnsureCacheLoaded();
+        var applicablePermissions = GetApplicablePermissions(fieldGuid, contentTypeId);
 
-        if (!cachedPermissions.TryGetValue(fieldGuid, out var permissions))
+        if (applicablePermissions.Count == 0)
         {
             return null;
         }
@@ -39,8 +39,9 @@ internal class FieldPermissionService(
         }
 
         FieldRestrictionResult? worstRestriction = null;
+        bool showInCreateMode = false;
 
-        foreach (var permission in permissions)
+        foreach (var permission in applicablePermissions)
         {
             var roleIds = ParseRoleIds(permission.FieldPermissionAllowedRoles);
             bool userMatchesRole = roleIds.Any(roleId => ResolveRoleName(roleId) is { } roleName && user.IsInRole(roleName));
@@ -60,7 +61,10 @@ internal class FieldPermissionService(
                 ? null
                 : permission.FieldPermissionInactiveMessage;
 
-            var restriction = new FieldRestrictionResult(permission.Mode, message);
+            // If any permission allows showing the field in create mode, the field is editable in create mode.
+            showInCreateMode |= permission.FieldPermissionShowInCreateMode;
+
+            var restriction = new FieldRestrictionResult(permission.Mode, message, showInCreateMode);
 
             // Track the most restrictive result (Hide > Disable).
             if (worstRestriction is null || restriction.Mode > worstRestriction.Mode)
@@ -70,7 +74,34 @@ internal class FieldPermissionService(
         }
 
         // User failed all permission checks — apply the most restrictive mode.
-        return worstRestriction;
+        // ShowInCreateMode is the logical OR across all failed permissions.
+        return worstRestriction is null
+            ? null
+            : worstRestriction with { ShowInCreateMode = showInCreateMode };
+    }
+
+    /// <summary>
+    /// Returns the permissions that apply to the given field. When the content type is known, only
+    /// permissions configured for that content type are returned — fields shared across content types
+    /// via reusable field schemas carry the same GUID, so the GUID alone is ambiguous. When the content
+    /// type is unknown (e.g. module class forms, whose field GUIDs are unique), all permissions for the
+    /// GUID are returned.
+    /// </summary>
+    private List<FieldPermissionInfo> GetApplicablePermissions(Guid fieldGuid, int? contentTypeId)
+    {
+        EnsureCacheLoaded();
+
+        if (!cachedPermissions.TryGetValue(fieldGuid, out var permissions))
+        {
+            return [];
+        }
+
+        if (contentTypeId is not { } contentTypeIdValue)
+        {
+            return permissions;
+        }
+
+        return [.. permissions.Where(p => p.FieldPermissionContentTypeID == contentTypeIdValue)];
     }
 
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId) =>

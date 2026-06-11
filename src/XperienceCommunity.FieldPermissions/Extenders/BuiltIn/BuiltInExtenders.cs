@@ -1,7 +1,6 @@
 using Kentico.Xperience.Admin.Base.Forms;
 
 using XperienceCommunity.FieldPermissions.Extenders.BuiltIn;
-using XperienceCommunity.FieldPermissions.Services;
 
 // Register extenders for all public built-in form component types.
 // XbyK matches extenders by exact type — no inheritance-based matching.
@@ -45,52 +44,52 @@ namespace XperienceCommunity.FieldPermissions.Extenders.BuiltIn;
 #pragma warning disable SA1402 // File may only contain a single type — one-liner extenders grouped intentionally
 
 // Text & rich content
-public sealed class RoleAwareTextInputExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<TextInputComponent>(svc);
-public sealed class RoleAwareTextAreaExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<TextAreaComponent>(svc);
-public sealed class RoleAwareRichTextEditorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<RichTextEditorComponent>(svc);
-public sealed class RoleAwareCodeEditorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<CodeEditorComponent>(svc);
+public sealed class RoleAwareTextInputExtender() : RoleAwareFormComponentExtenderBase<TextInputComponent>;
+public sealed class RoleAwareTextAreaExtender() : RoleAwareFormComponentExtenderBase<TextAreaComponent>;
+public sealed class RoleAwareRichTextEditorExtender() : RoleAwareFormComponentExtenderBase<RichTextEditorComponent>;
+public sealed class RoleAwareCodeEditorExtender() : RoleAwareFormComponentExtenderBase<CodeEditorComponent>;
 
 // Numbers
-public sealed class RoleAwareNumberInputExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<NumberInputComponent>(svc);
-public sealed class RoleAwareDecimalNumberInputExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<DecimalNumberInputComponent>(svc);
-public sealed class RoleAwareNumberWithLabelExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<NumberWithLabelComponent>(svc);
+public sealed class RoleAwareNumberInputExtender() : RoleAwareFormComponentExtenderBase<NumberInputComponent>;
+public sealed class RoleAwareDecimalNumberInputExtender() : RoleAwareFormComponentExtenderBase<DecimalNumberInputComponent>;
+public sealed class RoleAwareNumberWithLabelExtender() : RoleAwareFormComponentExtenderBase<NumberWithLabelComponent>;
 
 // Selection
-public sealed class RoleAwareDropDownExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<DropDownComponent>(svc);
-public sealed class RoleAwareRadioGroupExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<RadioGroupComponent>(svc);
-public sealed class RoleAwareCheckBoxExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<CheckBoxComponent>(svc);
+public sealed class RoleAwareDropDownExtender() : RoleAwareFormComponentExtenderBase<DropDownComponent>;
+public sealed class RoleAwareRadioGroupExtender() : RoleAwareFormComponentExtenderBase<RadioGroupComponent>;
+public sealed class RoleAwareCheckBoxExtender() : RoleAwareFormComponentExtenderBase<CheckBoxComponent>;
 
 // Date & time
-public sealed class RoleAwareDateInputExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<DateInputComponent>(svc);
-public sealed class RoleAwareDateTimeInputExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<DateTimeInputComponent>(svc);
-public sealed class RoleAwareDateTimeStringExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<DateTimeStringComponent>(svc);
+public sealed class RoleAwareDateInputExtender() : RoleAwareFormComponentExtenderBase<DateInputComponent>;
+public sealed class RoleAwareDateTimeInputExtender() : RoleAwareFormComponentExtenderBase<DateTimeInputComponent>;
+public sealed class RoleAwareDateTimeStringExtender() : RoleAwareFormComponentExtenderBase<DateTimeStringComponent>;
 
 // Content & assets
-public sealed class RoleAwareContentItemSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ContentItemSelectorComponent>(svc);
-public sealed class RoleAwareContentItemAssetUploaderExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ContentItemAssetUploaderComponent>(svc);
+public sealed class RoleAwareContentItemSelectorExtender() : RoleAwareFormComponentExtenderBase<ContentItemSelectorComponent>;
+public sealed class RoleAwareContentItemAssetUploaderExtender() : RoleAwareFormComponentExtenderBase<ContentItemAssetUploaderComponent>;
 #pragma warning disable CS0618 // AssetSelectorComponent is obsolete but still used in existing content types
-public sealed class RoleAwareAssetSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<AssetSelectorComponent>(svc);
+public sealed class RoleAwareAssetSelectorExtender() : RoleAwareFormComponentExtenderBase<AssetSelectorComponent>;
 #pragma warning restore CS0618
-public sealed class RoleAwareTagSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<TagSelectorComponent>(svc);
-public sealed class RoleAwareContentFolderSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ContentFolderSelectorComponent>(svc);
-public sealed class RoleAwareSmartFolderSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<SmartFolderSelectorComponent>(svc);
+public sealed class RoleAwareTagSelectorExtender() : RoleAwareFormComponentExtenderBase<TagSelectorComponent>;
+public sealed class RoleAwareContentFolderSelectorExtender() : RoleAwareFormComponentExtenderBase<ContentFolderSelectorComponent>;
+public sealed class RoleAwareSmartFolderSelectorExtender() : RoleAwareFormComponentExtenderBase<SmartFolderSelectorComponent>;
 
 // Object selectors
-public sealed class RoleAwareGeneralSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<GeneralSelectorComponent>(svc);
-public sealed class RoleAwareSingleGeneralSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<SingleGeneralSelectorComponent>(svc);
-public sealed class RoleAwareObjectSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ObjectSelectorComponent>(svc);
-public sealed class RoleAwareObjectIdSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ObjectIdSelectorComponent>(svc);
-public sealed class RoleAwareObjectGuidSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ObjectGuidSelectorComponent>(svc);
-public sealed class RoleAwareObjectCodeNameSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ObjectCodeNameSelectorComponent>(svc);
-public sealed class RoleAwareSingleObjectIdSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<SingleObjectIdSelectorComponent>(svc);
+public sealed class RoleAwareGeneralSelectorExtender() : RoleAwareFormComponentExtenderBase<GeneralSelectorComponent>;
+public sealed class RoleAwareSingleGeneralSelectorExtender() : RoleAwareFormComponentExtenderBase<SingleGeneralSelectorComponent>;
+public sealed class RoleAwareObjectSelectorExtender() : RoleAwareFormComponentExtenderBase<ObjectSelectorComponent>;
+public sealed class RoleAwareObjectIdSelectorExtender() : RoleAwareFormComponentExtenderBase<ObjectIdSelectorComponent>;
+public sealed class RoleAwareObjectGuidSelectorExtender() : RoleAwareFormComponentExtenderBase<ObjectGuidSelectorComponent>;
+public sealed class RoleAwareObjectCodeNameSelectorExtender() : RoleAwareFormComponentExtenderBase<ObjectCodeNameSelectorComponent>;
+public sealed class RoleAwareSingleObjectIdSelectorExtender() : RoleAwareFormComponentExtenderBase<SingleObjectIdSelectorComponent>;
 
 // Misc
-public sealed class RoleAwareIconSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<IconSelectorComponent>(svc);
-public sealed class RoleAwareLinkExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<LinkComponent>(svc);
-public sealed class RoleAwareExtensionSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ExtensionSelectorComponent>(svc);
-public sealed class RoleAwareConditionBuilderExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<ConditionBuilderComponent>(svc);
-public sealed class RoleAwareTileSelectorExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<TileSelectorComponent>(svc);
-public sealed class RoleAwareTextWithLabelExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<TextWithLabelComponent>(svc);
-public sealed class RoleAwarePasswordExtender(IFieldPermissionService svc) : RoleAwareFormComponentExtenderBase<PasswordComponent>(svc);
+public sealed class RoleAwareIconSelectorExtender() : RoleAwareFormComponentExtenderBase<IconSelectorComponent>;
+public sealed class RoleAwareLinkExtender() : RoleAwareFormComponentExtenderBase<LinkComponent>;
+public sealed class RoleAwareExtensionSelectorExtender() : RoleAwareFormComponentExtenderBase<ExtensionSelectorComponent>;
+public sealed class RoleAwareConditionBuilderExtender() : RoleAwareFormComponentExtenderBase<ConditionBuilderComponent>;
+public sealed class RoleAwareTileSelectorExtender() : RoleAwareFormComponentExtenderBase<TileSelectorComponent>;
+public sealed class RoleAwareTextWithLabelExtender() : RoleAwareFormComponentExtenderBase<TextWithLabelComponent>;
+public sealed class RoleAwarePasswordExtender() : RoleAwareFormComponentExtenderBase<PasswordComponent>;
 
 #pragma warning restore SA1402

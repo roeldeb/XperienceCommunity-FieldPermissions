@@ -141,6 +141,19 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
         formItem.Settings["controlname"] = "Kentico.Administration.TextArea";
         formInfo.AddFormItem(formItem);
 
+        formItem = new FormFieldInfo
+        {
+            Name = nameof(FieldPermissionInfo.FieldPermissionShowInCreateMode),
+            Caption = "Show field in create mode",
+            DataType = FieldDataType.Boolean,
+            Enabled = true,
+            Visible = true,
+            AllowEmpty = false,
+            DefaultValue = "False"
+        };
+        formItem.Settings["controlname"] = "Kentico.Administration.Checkbox";
+        formInfo.AddFormItem(formItem);
+
         SetFormDefinition(info, formInfo);
 
         if (info.HasChanged)
