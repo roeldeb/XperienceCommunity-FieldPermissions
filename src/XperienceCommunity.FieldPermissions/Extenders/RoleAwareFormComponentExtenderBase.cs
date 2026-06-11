@@ -32,6 +32,13 @@ namespace XperienceCommunity.FieldPermissions.Extenders;
 public abstract class RoleAwareFormComponentExtenderBase<T>
     : FormComponentExtender<T> where T : IFormComponent
 {
+    // The extender runs once per form component, but create mode and the edited content type are facts of
+    // the request, not the field. They are memoized in HttpContext.Items so the resolution (JSON parsing,
+    // Referer/path parsing and the content item / web page database lookups) runs once per request rather
+    // than once per field.
+    private const string ContentTypeIdItemKey = "XperienceCommunity.FieldPermissions.ContentTypeId";
+    private const string CreateModeItemKey = "XperienceCommunity.FieldPermissions.IsCreateMode";
+
     private static HttpContext? HttpContext => Service.Resolve<IHttpContextAccessor>().HttpContext;
 
     /// <summary>
@@ -40,6 +47,29 @@ public abstract class RoleAwareFormComponentExtenderBase<T>
     /// </summary>
     private static TService? GetScopedService<TService>() where TService : class
         => HttpContext?.RequestServices.GetService<TService>();
+
+    /// <summary>
+    /// Memoizes a request-level value in <see cref="HttpContext.Items"/>, computing it via <paramref name="factory"/>
+    /// on first access. Falls back to computing the value directly when there is no current HTTP context.
+    /// </summary>
+    private static TValue GetOrAddRequestValue<TValue>(string key, Func<TValue> factory)
+    {
+        var httpContext = HttpContext;
+
+        if (httpContext is null)
+        {
+            return factory();
+        }
+
+        if (httpContext.Items.TryGetValue(key, out object? cached))
+        {
+            return (TValue)cached!;
+        }
+
+        var value = factory();
+        httpContext.Items[key] = value;
+        return value;
+    }
 
     /// <inheritdoc/>
     public override async Task ConfigureComponent()
@@ -50,7 +80,7 @@ public abstract class RoleAwareFormComponentExtenderBase<T>
             return;
         }
 
-        int? contentTypeId = TryResolveContentTypeId();
+        int? contentTypeId = GetContentTypeId();
 
         var restriction = await fieldPermissionService.GetFieldRestrictionAsync(FormComponent.Guid, contentTypeId);
 
@@ -89,12 +119,22 @@ public abstract class RoleAwareFormComponentExtenderBase<T>
     }
 
     /// <summary>
-    /// Determines whether the form is in create mode (new item) vs edit mode (existing item).
+    /// The DataClassInfo.ClassID of the content type being edited or created, resolved once per request.
+    /// </summary>
+    private static int? GetContentTypeId()
+        => GetOrAddRequestValue(ContentTypeIdItemKey, TryResolveContentTypeId);
+
+    /// <summary>
+    /// Determines whether the form is in create mode (new item) vs edit mode (existing item), resolved once
+    /// per request.
     /// Uses the Referer header because extender <c>ConfigureComponent()</c> runs during component activation
     /// (in <c>FormComponentFromFormFieldActivator</c>), before <c>BindContext()</c> sets the <c>FormContext</c>.
     /// All XbyK admin create pages use a <c>/create</c> URL suffix.
     /// </summary>
     private static bool IsCreateMode()
+        => GetOrAddRequestValue(CreateModeItemKey, ResolveCreateMode);
+
+    private static bool ResolveCreateMode()
     {
         string? referer = HttpContext?.Request.Headers.Referer.ToString();
 
