@@ -117,6 +117,20 @@ public sealed class RoleAwareCustomDropdownExtender()
     : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>;
 ```
 
+> **⚠️ Breaking change when upgrading from 1.0.0 — custom form component extenders.** `RoleAwareFormComponentExtenderBase<T>` no longer takes `IFieldPermissionService` (or any service) via its constructor; it now resolves its dependencies internally. Update custom extenders to a parameterless constructor:
+>
+> ```csharp
+> // Before
+> public sealed class RoleAwareMyComponentExtender(IFieldPermissionService svc)
+>     : RoleAwareFormComponentExtenderBase<MyComponent>(svc);
+>
+> // After
+> public sealed class RoleAwareMyComponentExtender()
+>     : RoleAwareFormComponentExtenderBase<MyComponent>;
+> ```
+>
+> Registration via `[assembly: FormComponentExtender(...)]` is unchanged.
+
 ## Full Instructions
 
 View the [Usage Guide](https://github.com/roeldeb/xperiencecommunity-fieldpermissions/blob/main/docs/Usage-Guide.md) for complete documentation including:

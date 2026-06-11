@@ -104,6 +104,20 @@ public sealed class RoleAwareCustomDropdownExtender()
     : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>;
 ```
 
+> **⚠️ Breaking change when upgrading from 1.0.0.** `RoleAwareFormComponentExtenderBase<T>` no longer takes `IFieldPermissionService` (or any service) via its constructor — it resolves its dependencies internally. Change custom extenders to a parameterless constructor:
+>
+> ```csharp
+> // Before
+> public sealed class RoleAwareMyComponentExtender(IFieldPermissionService svc)
+>     : RoleAwareFormComponentExtenderBase<MyComponent>(svc);
+>
+> // After
+> public sealed class RoleAwareMyComponentExtender()
+>     : RoleAwareFormComponentExtenderBase<MyComponent>;
+> ```
+>
+> Registration via `[assembly: FormComponentExtender(...)]` is unchanged.
+
 **Why is this needed?** Xperience by Kentico matches extenders by exact form component type — there is no inheritance-based matching. A `FormComponentExtender<TextInputComponent>` will only run for `TextInputComponent`, not for any subclass or other component type.
 
 You can register multiple custom extenders in the same file:
