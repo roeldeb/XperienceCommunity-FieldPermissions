@@ -25,6 +25,20 @@ This module provides role-based field-level permissions that can be configured p
 
 Field permissions are enforced using `FormComponentExtender<T>`, the official Xperience by Kentico extension point for modifying form component behavior.
 
+## Example usecase
+
+**Meet Maria, content lead at a busy marketing team running Xperience by Kentico.**
+
+- 😬 **The problem:** Her *Article* content type has a "Legal disclaimer" field that Legal carefully signed off on. But any junior author can open the article and edit it — and they do, by accident.
+- 🎫 **Before:** Maria's only options were "trust everyone" or "open a developer ticket" every time a field needed locking down. Neither scaled.
+- ✨ **Enter Field Permissions:** She opens the *Article* content type, clicks the **Field permissions** tab, and in a few clicks says: *only the Legal role can edit "Legal disclaimer."*
+- 🔒 **For everyone else:** the field is now **read-only** with a friendly note — *"Contact Legal to change this."* No code, no deployment.
+- 🙈 **One step further:** The sensitive "Internal cost" field? She sets it to **Hide** — authors don't even see it exists.
+- 🆕 **But creation still works:** "Internal cost" is required when an article is first created. She ticks **Show in create mode**, so authors can fill it in once at creation — but can't touch it afterwards.
+- 🎯 **The result:** Legal keeps control, authors stay productive, and Maria never files another "please lock this field" ticket.
+
+> **Field Permissions** turns "we need a developer for that" into "I'll do it myself in 30 seconds" — role-based, per-field, right inside the Kentico admin.
+
 ## Requirements
 
 ### Library Version Matrix
