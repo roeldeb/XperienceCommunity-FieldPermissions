@@ -76,8 +76,13 @@ From there you can:
    - **Disable** — field is shown as read-only with an optional message
    - **Hide** — field is completely invisible
 6. **Set an inactive message** (optional) — shown to restricted users when mode is "Disable"
+7. **Show field in create mode** (optional) — when enabled, the field's restrictions are bypassed while a new item is being created, so a restricted (e.g. required) field can still be filled in. Restrictions apply as normal once the item is saved and subsequently edited. When multiple rules target the same field, the field is shown in create mode if **any** of them has this enabled.
 
 The listing shows all configured restrictions for the content type with the resolved field name, role names, mode, and message.
+
+### Fields shared by reusable field schemas
+
+Content types that use the same **reusable field schema** include the schema's fields with the **same field GUID**. Permissions are stored per content type, and the correct content type is resolved at runtime so a rule configured for one content type does **not** leak onto the identical field in another. The content type is derived from the admin request (the posted command data for create flows, or the object identifier in the page path for edit). This works for website channel pages, content hub items, and module class entries; module class fields have unique GUIDs and need no disambiguation.
 
 ## Extending Custom Form Components
 
@@ -87,7 +92,6 @@ If your project uses **custom form components**, you need to register an extende
 
 ```csharp
 using XperienceCommunity.FieldPermissions.Extenders;
-using XperienceCommunity.FieldPermissions.Services;
 
 using Kentico.Xperience.Admin.Base.Forms;
 
@@ -95,10 +99,24 @@ using Kentico.Xperience.Admin.Base.Forms;
 
 namespace MyProject;
 
-// Inherit the base class and pass through the service — that's it.
-public sealed class RoleAwareCustomDropdownExtender(IFieldPermissionService svc)
-    : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>(svc);
+// Inherit the base class — that's it. No DI parameters needed.
+public sealed class RoleAwareCustomDropdownExtender()
+    : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>;
 ```
+
+> **⚠️ Breaking change when upgrading from 1.0.0.** `RoleAwareFormComponentExtenderBase<T>` no longer takes `IFieldPermissionService` (or any service) via its constructor — it resolves its dependencies internally. Change custom extenders to a parameterless constructor:
+>
+> ```csharp
+> // Before
+> public sealed class RoleAwareMyComponentExtender(IFieldPermissionService svc)
+>     : RoleAwareFormComponentExtenderBase<MyComponent>(svc);
+>
+> // After
+> public sealed class RoleAwareMyComponentExtender()
+>     : RoleAwareFormComponentExtenderBase<MyComponent>;
+> ```
+>
+> Registration via `[assembly: FormComponentExtender(...)]` is unchanged.
 
 **Why is this needed?** Xperience by Kentico matches extenders by exact form component type — there is no inheritance-based matching. A `FormComponentExtender<TextInputComponent>` will only run for `TextInputComponent`, not for any subclass or other component type.
 
@@ -110,11 +128,11 @@ You can register multiple custom extenders in the same file:
 
 namespace MyProject;
 
-public sealed class RoleAwareCustomDropdownExtender(IFieldPermissionService svc)
-    : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>(svc);
+public sealed class RoleAwareCustomDropdownExtender()
+    : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>;
 
-public sealed class RoleAwareColorPickerExtender(IFieldPermissionService svc)
-    : RoleAwareFormComponentExtenderBase<ColorPickerComponent>(svc);
+public sealed class RoleAwareColorPickerExtender()
+    : RoleAwareFormComponentExtenderBase<ColorPickerComponent>;
 ```
 
 ## Key Types
@@ -122,7 +140,7 @@ public sealed class RoleAwareColorPickerExtender(IFieldPermissionService svc)
 | Type | Namespace | Description |
 |------|-----------|-------------|
 | `IFieldPermissionService` | `XperienceCommunity.FieldPermissions.Services` | Service for checking field restrictions |
-| `FieldRestrictionResult` | `XperienceCommunity.FieldPermissions.Services` | Result of a permission check (mode + message) |
+| `FieldRestrictionResult` | `XperienceCommunity.FieldPermissions.Services` | Result of a permission check (mode + message + show-in-create-mode) |
 | `RoleAwareFormComponentExtenderBase<T>` | `XperienceCommunity.FieldPermissions.Extenders` | Base class for custom component extenders |
 | `FieldPermissionInfo` | `XperienceCommunity.FieldPermissions.Classes` | Info object representing a stored permission |
 | `FieldPermissionMode` | `XperienceCommunity.FieldPermissions` | Enum: `Disable` (0) or `Hide` (1) |
@@ -141,6 +159,7 @@ The `XperienceCommunity_FieldPermission` table is created automatically on first
 | `FieldPermissionAllowedRoles` | nvarchar(max) | JSON array of role IDs, e.g. `[1,2,3]` |
 | `FieldPermissionMode` | int | 0 = Disable, 1 = Hide |
 | `FieldPermissionInactiveMessage` | nvarchar(max) | Optional message shown when field is disabled |
+| `FieldPermissionShowInCreateMode` | bit | When `true`, restrictions are bypassed while creating a new item |
 
 ## Troubleshooting
 

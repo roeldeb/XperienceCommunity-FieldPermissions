@@ -129,6 +129,17 @@ namespace XperienceCommunity.FieldPermissions.Classes
 
 
         /// <summary>
+        /// Whether to show the field (bypass restrictions) when creating a new content item.
+        /// </summary>
+        [DatabaseField]
+        public virtual bool FieldPermissionShowInCreateMode
+        {
+            get => ValidationHelper.GetBoolean(GetValue(nameof(FieldPermissionShowInCreateMode)), false);
+            set => SetValue(nameof(FieldPermissionShowInCreateMode), value);
+        }
+
+
+        /// <summary>
         /// Deletes the object using appropriate provider.
         /// </summary>
         protected override void DeleteObject()
