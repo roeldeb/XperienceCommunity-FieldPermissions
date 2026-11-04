@@ -45,7 +45,8 @@ Field permissions are enforced using `FormComponentExtender<T>`, the official Xp
 
 | Xperience Version | Library Version |
 | ----------------- | --------------- |
-| >= 31.3.0         | 1.0.0           |
+| >= 31.10.1        | 1.2.0           |
+| >= 31.3.0         | 1.0.0 - 1.1.0   |
 
 ### Dependencies
 
