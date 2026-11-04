@@ -23,10 +23,9 @@ await app.RunAsync();
 // needs its own one-liner class:
 //
 // using XperienceCommunity.FieldPermissions.Extenders;
-// using XperienceCommunity.FieldPermissions.Services;
 //
 // [assembly: FormComponentExtender(typeof(RoleAwareCustomDropdownExtender))]
 //
-// public sealed class RoleAwareCustomDropdownExtender(IFieldPermissionService svc)
-//     : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>(svc);
+// public sealed class RoleAwareCustomDropdownExtender()
+//     : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>;
 
