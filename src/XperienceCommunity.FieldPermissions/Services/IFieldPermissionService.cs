@@ -21,8 +21,7 @@ public interface IFieldPermissionService
     public Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid, int? contentTypeId = null);
 
     /// <summary>
-    /// Gets all field permission configurations for a given content type.
-    /// Used by the admin UI listing page.
+    /// Gets all field permission configurations for a given content type (served from the cache).
     /// </summary>
     /// <param name="contentTypeId">The DataClassInfo.ClassID of the content type.</param>
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId);

@@ -25,7 +25,7 @@ namespace XperienceCommunity.FieldPermissions.Extenders;
 /// <code>
 /// [assembly: FormComponentExtender(typeof(RoleAwareMyCustomExtender))]
 /// public sealed class RoleAwareMyCustomExtender()
-///     : RoleAwareFormComponentExtenderBase&lt;MyCustomComponent&gt;();
+///     : RoleAwareFormComponentExtenderBase&lt;MyCustomComponent&gt;;
 /// </code>
 /// </remarks>
 /// <typeparam name="T">The form component type to extend.</typeparam>

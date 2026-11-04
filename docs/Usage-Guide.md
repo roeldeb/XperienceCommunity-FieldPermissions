@@ -147,7 +147,7 @@ public sealed class RoleAwareColorPickerExtender()
 
 ## Database Structure
 
-The `XperienceCommunity_FieldPermission` table is created automatically on first application start:
+The `XperienceCommunity_FieldPermission` table is created automatically on startup (skipped while the instance runs in read-only mode, e.g. during a zero-downtime deployment):
 
 | Column | Type | Description |
 |--------|------|-------------|
@@ -166,7 +166,7 @@ The `XperienceCommunity_FieldPermission` table is created automatically on first
 ### Field Permissions Tab Not Appearing
 
 - Ensure `builder.Services.AddFieldPermissions()` is called in `Program.cs`
-- Rebuild and restart the application — the module installer runs on first startup
+- Rebuild and restart the application — the module installer runs on startup (skipped while the instance runs in read-only mode, e.g. during a zero-downtime deployment; it runs once the instance starts in writable mode)
 
 ### Permissions Not Being Enforced
 

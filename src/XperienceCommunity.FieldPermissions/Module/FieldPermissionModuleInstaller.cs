@@ -52,9 +52,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         // Fixed field GUIDs: without them every FormFieldInfo gets a random GUID, so each
         // environment ends up with a different class definition (CI/CD churn).
-        var idField = formInfo.GetFormField(nameof(FieldPermissionInfo.FieldPermissionID));
-        idField.Guid = new Guid("0755c690-0caa-4532-8082-ffb53da8d616");
-        formInfo.UpdateFormField(nameof(FieldPermissionInfo.FieldPermissionID), idField);
+        formInfo.GetFormField(nameof(FieldPermissionInfo.FieldPermissionID)).Guid = new Guid("0755c690-0caa-4532-8082-ffb53da8d616");
 
         var formItem = new FormFieldInfo
         {

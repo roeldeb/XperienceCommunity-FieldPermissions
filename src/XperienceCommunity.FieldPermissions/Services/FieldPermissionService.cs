@@ -106,8 +106,9 @@ internal class FieldPermissionService(
     }
 
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId) =>
-        fieldPermissionProvider.Get()
-            .WhereEquals(nameof(FieldPermissionInfo.FieldPermissionContentTypeID), contentTypeId)
+        GetPermissionsByFieldGuid().Values
+            .SelectMany(permissions => permissions)
+            .Where(permission => permission.FieldPermissionContentTypeID == contentTypeId)
             .ToList();
 
     public void InvalidateCache() => CacheHelper.TouchKeys([permissionsDependencyKey, rolesDependencyKey]);
