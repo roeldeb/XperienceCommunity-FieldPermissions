@@ -28,7 +28,10 @@ public interface IFieldPermissionService
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId);
 
     /// <summary>
-    /// Invalidates the cached permission data. Call when permissions are changed.
+    /// Invalidates the cached permission and role data, on every web farm instance.
+    /// The cache is invalidated automatically when field permissions or roles change through the
+    /// Kentico API (including the admin UI); call this only after changing the data outside of it,
+    /// e.g. directly in the database.
     /// </summary>
     public void InvalidateCache();
 }

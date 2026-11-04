@@ -7,7 +7,6 @@ using Kentico.Xperience.Admin.Base.Forms;
 
 using XperienceCommunity.FieldPermissions.Admin;
 using XperienceCommunity.FieldPermissions.Classes;
-using XperienceCommunity.FieldPermissions.Services;
 
 [assembly: UIPage(
     parentType: typeof(FieldPermissionEditSection),
@@ -24,8 +23,7 @@ namespace XperienceCommunity.FieldPermissions.Admin;
 /// </summary>
 public class FieldPermissionEdit(
     IFormComponentMapper formComponentMapper,
-    IFormDataBinder formDataBinder,
-    IFieldPermissionService fieldPermissionService)
+    IFormDataBinder formDataBinder)
     : InfoEditPage<FieldPermissionInfo>(formComponentMapper, formDataBinder)
 {
     [PageParameter(typeof(IntPageModelBinder), typeof(FieldPermissionEditSection))]
@@ -58,8 +56,6 @@ public class FieldPermissionEdit(
         FieldPermissionInfo savedInfoObject,
         ICollection<IFormItem> items)
     {
-        fieldPermissionService.InvalidateCache();
-
         string? displayName = FieldPermissionFormHelper.ResolveFieldDisplayName(
             savedInfoObject.FieldPermissionContentTypeID, savedInfoObject.FieldPermissionFieldGuid);
 

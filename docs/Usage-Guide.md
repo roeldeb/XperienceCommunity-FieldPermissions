@@ -172,7 +172,7 @@ The `XperienceCommunity_FieldPermission` table is created automatically on first
 
 - Verify the permission is saved for the correct content type and field
 - Check that the user is **not** an Administrator (administrators bypass all restrictions)
-- The permission cache refreshes on changes made through the admin UI. If you modify the database directly, restart the application
+- The permission cache refreshes automatically when permissions or roles change through the Kentico API (including the admin UI), also on other web farm instances. If you modify the database directly, call `IFieldPermissionService.InvalidateCache()` or restart the application
 
 ### Custom Component Not Affected
 
