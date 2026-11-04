@@ -1298,7 +1298,7 @@
       "xperiencecommunity.fieldpermissions": {
         "type": "Project",
         "dependencies": {
-          "Kentico.Xperience.Admin": "[31.10.1, )"
+          "Kentico.Xperience.Admin": "[31.3.0, )"
         }
       }
     }
