@@ -50,8 +50,15 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         var formInfo = FormHelper.GetBasicFormDefinition(nameof(FieldPermissionInfo.FieldPermissionID));
 
+        // Fixed field GUIDs: without them every FormFieldInfo gets a random GUID, so each
+        // environment ends up with a different class definition (CI/CD churn).
+        var idField = formInfo.GetFormField(nameof(FieldPermissionInfo.FieldPermissionID));
+        idField.Guid = new Guid("0755c690-0caa-4532-8082-ffb53da8d616");
+        formInfo.UpdateFormField(nameof(FieldPermissionInfo.FieldPermissionID), idField);
+
         var formItem = new FormFieldInfo
         {
+            Guid = new Guid("cebefc7e-d3da-46f9-a083-fb764cfbbe78"),
             Name = nameof(FieldPermissionInfo.FieldPermissionGuid),
             DataType = FieldDataType.Guid,
             Enabled = true,
@@ -62,6 +69,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("ed1c35c0-4b22-43b5-a848-9c588ffc34b2"),
             Name = nameof(FieldPermissionInfo.FieldPermissionContentTypeID),
             DataType = FieldDataType.Integer,
             Enabled = true,
@@ -74,6 +82,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("6c953561-a328-48bd-a256-123060e820aa"),
             Name = nameof(FieldPermissionInfo.FieldPermissionFieldGuid),
             Caption = "Field",
             DataType = FieldDataType.Guid,
@@ -86,6 +95,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("787c21b5-7bad-4d3a-9e20-1995f5fe764a"),
             Name = nameof(FieldPermissionInfo.FieldPermissionRoleMode),
             Caption = "Role mode",
             DataType = FieldDataType.Text,
@@ -102,6 +112,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("4bf71cd1-cef2-4de2-ade0-5219436fc54f"),
             Name = nameof(FieldPermissionInfo.FieldPermissionAllowedRoles),
             Caption = "Roles",
             DataType = FieldDataType.LongText,
@@ -116,6 +127,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("17e45b43-782f-4c22-ab6f-a0139d8f4c5e"),
             Name = nameof(FieldPermissionInfo.FieldPermissionMode),
             Caption = "Mode",
             DataType = FieldDataType.Integer,
@@ -131,6 +143,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("fb619406-b590-4f4b-b345-a9fc488e5544"),
             Name = nameof(FieldPermissionInfo.FieldPermissionInactiveMessage),
             Caption = "Inactive message",
             DataType = FieldDataType.LongText,
@@ -143,6 +156,7 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
 
         formItem = new FormFieldInfo
         {
+            Guid = new Guid("fb720f69-205d-4a98-8286-85d05f15b01f"),
             Name = nameof(FieldPermissionInfo.FieldPermissionShowInCreateMode),
             Caption = "Show field in create mode",
             DataType = FieldDataType.Boolean,
@@ -170,7 +184,9 @@ internal class FieldPermissionModuleInstaller(IInfoProvider<ResourceInfo> resour
         if (info.ClassID > 0)
         {
             var existingForm = new FormInfo(info.ClassFormDefinition);
-            existingForm.CombineWithForm(form, new());
+            // OverwriteExisting heals environments installed before the fixed field GUIDs
+            // existed (random GUIDs stored in the class definition).
+            existingForm.CombineWithForm(form, new() { OverwriteExisting = true });
             info.ClassFormDefinition = existingForm.GetXmlDefinition();
         }
         else
