@@ -8,7 +8,6 @@ using Kentico.Xperience.Admin.Base.UIPages;
 
 using XperienceCommunity.FieldPermissions.Admin;
 using XperienceCommunity.FieldPermissions.Classes;
-using XperienceCommunity.FieldPermissions.Services;
 
 [assembly: UIPage(
     parentType: typeof(FieldPermissionList),
@@ -27,8 +26,7 @@ namespace XperienceCommunity.FieldPermissions.Admin;
 public class FieldPermissionCreate(
     IFormComponentMapper formComponentMapper,
     IFormDataBinder formDataBinder,
-    IPageLinkGenerator pageLinkGenerator,
-    IFieldPermissionService fieldPermissionService)
+    IPageLinkGenerator pageLinkGenerator)
     : CreatePage<FieldPermissionInfo, FieldPermissionEditSection>(formComponentMapper, formDataBinder, pageLinkGenerator)
 {
     [PageParameter(typeof(IntPageModelBinder), typeof(ContentTypeEditSection))]
@@ -108,13 +106,5 @@ public class FieldPermissionCreate(
             });
 
         fieldInfo.Settings["Options"] = string.Join("\n", options);
-    }
-
-    protected override Task<ICommandResponse> GetSubmitSuccessResponse(
-        FieldPermissionInfo savedInfoObject,
-        ICollection<IFormItem> items)
-    {
-        fieldPermissionService.InvalidateCache();
-        return base.GetSubmitSuccessResponse(savedInfoObject, items);
     }
 }

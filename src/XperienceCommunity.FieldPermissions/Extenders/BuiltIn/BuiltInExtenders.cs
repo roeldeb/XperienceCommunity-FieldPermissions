@@ -18,7 +18,6 @@ using XperienceCommunity.FieldPermissions.Extenders.BuiltIn;
 [assembly: FormComponentExtender(typeof(RoleAwareCodeEditorExtender))]
 [assembly: FormComponentExtender(typeof(RoleAwareContentItemSelectorExtender))]
 [assembly: FormComponentExtender(typeof(RoleAwareContentItemAssetUploaderExtender))]
-[assembly: FormComponentExtender(typeof(RoleAwareAssetSelectorExtender))]
 [assembly: FormComponentExtender(typeof(RoleAwareTagSelectorExtender))]
 [assembly: FormComponentExtender(typeof(RoleAwareGeneralSelectorExtender))]
 [assembly: FormComponentExtender(typeof(RoleAwareSingleGeneralSelectorExtender))]
@@ -67,9 +66,6 @@ public sealed class RoleAwareDateTimeStringExtender() : RoleAwareFormComponentEx
 // Content & assets
 public sealed class RoleAwareContentItemSelectorExtender() : RoleAwareFormComponentExtenderBase<ContentItemSelectorComponent>;
 public sealed class RoleAwareContentItemAssetUploaderExtender() : RoleAwareFormComponentExtenderBase<ContentItemAssetUploaderComponent>;
-#pragma warning disable CS0618 // AssetSelectorComponent is obsolete but still used in existing content types
-public sealed class RoleAwareAssetSelectorExtender() : RoleAwareFormComponentExtenderBase<AssetSelectorComponent>;
-#pragma warning restore CS0618
 public sealed class RoleAwareTagSelectorExtender() : RoleAwareFormComponentExtenderBase<TagSelectorComponent>;
 public sealed class RoleAwareContentFolderSelectorExtender() : RoleAwareFormComponentExtenderBase<ContentFolderSelectorComponent>;
 public sealed class RoleAwareSmartFolderSelectorExtender() : RoleAwareFormComponentExtenderBase<SmartFolderSelectorComponent>;

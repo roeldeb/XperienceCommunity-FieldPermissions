@@ -1,9 +1,11 @@
 # Auto detect text files and perform LF normalization
 
-# Windows developers can enable autocrlf to checkout in crlf and commit in lf
-# git config --global core.autocrlf true
+# Text files are checked out with LF on every OS, including Windows.
 
-*                   text=auto
+*                   text=auto eol=lf
+
+.gitattributes      text
+.editorconfig       text
 
 *.cs                text diff=csharp
 *.cshtml            text diff=html
@@ -16,6 +18,7 @@
 
 *.xproj             text
 *.props             text
+*.targets           text
 *.filters           text
 *.vcxitems          text
 

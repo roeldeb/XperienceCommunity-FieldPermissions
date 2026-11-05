@@ -21,14 +21,16 @@ public interface IFieldPermissionService
     public Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid, int? contentTypeId = null);
 
     /// <summary>
-    /// Gets all field permission configurations for a given content type.
-    /// Used by the admin UI listing page.
+    /// Gets all field permission configurations for a given content type (served from the cache).
     /// </summary>
     /// <param name="contentTypeId">The DataClassInfo.ClassID of the content type.</param>
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId);
 
     /// <summary>
-    /// Invalidates the cached permission data. Call when permissions are changed.
+    /// Invalidates the cached permission and role data, on every web farm instance.
+    /// The cache is invalidated automatically when field permissions or roles change through the
+    /// Kentico API (including the admin UI); call this only after changing the data outside of it,
+    /// e.g. directly in the database.
     /// </summary>
     public void InvalidateCache();
 }

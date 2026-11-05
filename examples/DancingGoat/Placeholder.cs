@@ -18,15 +18,7 @@ app.UseKentico();
 
 await app.RunAsync();
 
-// Example: Extend a custom form component with field permissions.
-// XbyK matches extenders by exact type, so each custom component
-// needs its own one-liner class:
-//
-// using XperienceCommunity.FieldPermissions.Extenders;
-// using XperienceCommunity.FieldPermissions.Services;
-//
-// [assembly: FormComponentExtender(typeof(RoleAwareCustomDropdownExtender))]
-//
-// public sealed class RoleAwareCustomDropdownExtender(IFieldPermissionService svc)
-//     : RoleAwareFormComponentExtenderBase<CustomDropdownComponent>(svc);
-
+// Custom form components need their own extender class, because Xperience
+// matches extenders by exact component type. See "Extending Custom Form Components"
+// in docs/Usage-Guide.md for the one-liner subclass of
+// RoleAwareFormComponentExtenderBase<T> and its registration.

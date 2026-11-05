@@ -1,7 +1,7 @@
-using System.Collections.Concurrent;
 using System.Text.Json;
 
 using CMS.DataEngine;
+using CMS.Helpers;
 using CMS.Membership;
 
 using Kentico.Xperience.Admin.Base.Authentication;
@@ -10,17 +10,18 @@ using XperienceCommunity.FieldPermissions.Classes;
 
 namespace XperienceCommunity.FieldPermissions.Services;
 
-#pragma warning disable S2696 // Static fields are intentionally used for cross-request caching
-
 internal class FieldPermissionService(
     IAuthenticatedUserAccessor authenticatedUserAccessor,
     IInfoProvider<FieldPermissionInfo> fieldPermissionProvider,
-    IInfoProvider<RoleInfo> roleInfoProvider) : IFieldPermissionService
+    IInfoProvider<RoleInfo> roleInfoProvider,
+    IProgressiveCache progressiveCache) : IFieldPermissionService
 {
-    private static readonly ConcurrentDictionary<Guid, List<FieldPermissionInfo>> cachedPermissions = new();
-    private static readonly ConcurrentDictionary<int, string> cachedRoleNames = new();
-    private static bool cacheLoaded;
-    private static readonly object cacheLock = new();
+    private const int CacheMinutes = 60;
+
+    // Touched by Kentico whenever an object of the type is created, updated or deleted
+    // (TouchCacheDependencies on the type info); touches are synchronised across web farm instances.
+    private static readonly string permissionsDependencyKey = $"{FieldPermissionInfo.OBJECT_TYPE}|all";
+    private static readonly string rolesDependencyKey = $"{RoleInfo.OBJECT_TYPE}|all";
 
     public async Task<FieldRestrictionResult?> GetFieldRestrictionAsync(Guid fieldGuid, int? contentTypeId = null)
     {
@@ -38,13 +39,15 @@ internal class FieldPermissionService(
             return null;
         }
 
+        var roleNames = GetRoleNames();
+
         FieldRestrictionResult? worstRestriction = null;
         bool showInCreateMode = false;
 
         foreach (var permission in applicablePermissions)
         {
             var roleIds = ParseRoleIds(permission.FieldPermissionAllowedRoles);
-            bool userMatchesRole = roleIds.Any(roleId => ResolveRoleName(roleId) is { } roleName && user.IsInRole(roleName));
+            bool userMatchesRole = roleIds.Any(roleId => roleNames.TryGetValue(roleId, out string? roleName) && user.IsInRole(roleName));
             bool isDisallowMode = string.Equals(permission.FieldPermissionRoleMode, "disallow", StringComparison.OrdinalIgnoreCase);
 
             // Allow mode: user must be in one of the listed roles to pass.
@@ -89,9 +92,7 @@ internal class FieldPermissionService(
     /// </summary>
     private List<FieldPermissionInfo> GetApplicablePermissions(Guid fieldGuid, int? contentTypeId)
     {
-        EnsureCacheLoaded();
-
-        if (!cachedPermissions.TryGetValue(fieldGuid, out var permissions))
+        if (!GetPermissionsByFieldGuid().TryGetValue(fieldGuid, out var permissions))
         {
             return [];
         }
@@ -105,54 +106,35 @@ internal class FieldPermissionService(
     }
 
     public IEnumerable<FieldPermissionInfo> GetRestrictionsForContentType(int contentTypeId) =>
-        fieldPermissionProvider.Get()
-            .WhereEquals(nameof(FieldPermissionInfo.FieldPermissionContentTypeID), contentTypeId)
+        GetPermissionsByFieldGuid().Values
+            .SelectMany(permissions => permissions)
+            .Where(permission => permission.FieldPermissionContentTypeID == contentTypeId)
             .ToList();
 
-    public void InvalidateCache()
-    {
-        lock (cacheLock)
-        {
-            cachedPermissions.Clear();
-            cachedRoleNames.Clear();
-            cacheLoaded = false;
-        }
-    }
+    public void InvalidateCache() => CacheHelper.TouchKeys([permissionsDependencyKey, rolesDependencyKey]);
 
-    private void EnsureCacheLoaded()
-    {
-        if (cacheLoaded)
-        {
-            return;
-        }
-
-        lock (cacheLock)
-        {
-            if (cacheLoaded)
+    private Dictionary<Guid, List<FieldPermissionInfo>> GetPermissionsByFieldGuid() =>
+        progressiveCache.Load(
+            cacheSettings =>
             {
-                return;
-            }
+                cacheSettings.CacheDependency = CacheHelper.GetCacheDependency(permissionsDependencyKey);
 
-            var allPermissions = fieldPermissionProvider.Get().ToList();
+                return fieldPermissionProvider.Get()
+                    .GroupBy(permission => permission.FieldPermissionFieldGuid)
+                    .ToDictionary(group => group.Key, group => group.ToList());
+            },
+            new CacheSettings(CacheMinutes, nameof(FieldPermissionService), nameof(GetPermissionsByFieldGuid)));
 
-            foreach (var permission in allPermissions)
+    private Dictionary<int, string> GetRoleNames() =>
+        progressiveCache.Load(
+            cacheSettings =>
             {
-                cachedPermissions.AddOrUpdate(
-                    permission.FieldPermissionFieldGuid,
-                    _ => [permission],
-                    (_, list) => { list.Add(permission); return list; });
-            }
+                cacheSettings.CacheDependency = CacheHelper.GetCacheDependency(rolesDependencyKey);
 
-            cacheLoaded = true;
-        }
-    }
-
-    private string? ResolveRoleName(int roleId) =>
-        cachedRoleNames.GetOrAdd(roleId, id =>
-        {
-            var role = roleInfoProvider.Get(id);
-            return role?.RoleName ?? string.Empty;
-        }) is { Length: > 0 } name ? name : null;
+                return roleInfoProvider.Get()
+                    .ToDictionary(role => role.RoleID, role => role.RoleName);
+            },
+            new CacheSettings(CacheMinutes, nameof(FieldPermissionService), nameof(GetRoleNames)));
 
     /// <summary>
     /// Parses role IDs from the stored value. The ObjectIdSelectorComponent stores
