@@ -25,6 +25,3 @@ appsettings.*.local.json
 # IDE and tooling
 **/.vs/
 **/.idea/
-
-# GitNexus index files
-.gitnexus/
